@@ -36,9 +36,11 @@ const demoTokens: TokenData[] = [
     uri: "https://cf-ipfs.com/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco",
   },
 ]
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!;
+
 
 export default function Cosmo() {
-  const { connected, connectionState, messages, error, reconnect } = useWebSocket("ws://localhost:8080/connect")
+  const { connected, connectionState, messages, error, reconnect } = useWebSocket(backendUrl)
   const [searchQuery, setSearchQuery] = useState("")
   const [demoMode, setDemoMode] = useState(false)
   const [displayMessages, setDisplayMessages] = useState<TokenData[]>([])
