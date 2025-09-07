@@ -36,12 +36,36 @@ const demoTokens: TokenData[] = [
     uri: "https://cf-ipfs.com/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco",
   },
 ]
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_WS_URL!;
-  // Converts http/https to ws/wss
-const wsProtocol = backendUrl.startsWith("https") ? "wss" : "ws";
-const wsUrl = `${wsProtocol}://${new URL(backendUrl).host}/connect`;
+// Fix WebSocket URL construction
+function constructWebSocketURL(backendUrl: string): string {
+  try {
+    // Remove trailing slash if present
+    const cleanUrl = backendUrl.replace(/\/$/, '');
+    
+    // Convert HTTP/HTTPS to WS/WSS
+    let wsUrl: string;
+    if (cleanUrl.startsWith('https://')) {
+      wsUrl = cleanUrl.replace('https://', 'wss://');
+    } else if (cleanUrl.startsWith('http://')) {
+      wsUrl = cleanUrl.replace('http://', 'ws://');
+    } else {
+      // If no protocol is specified, assume HTTPS for production
+      wsUrl = `wss://${cleanUrl}`;
+    }
+    
+    // Add the WebSocket endpoint
+    return `${wsUrl}/connect`;
+  } catch (error) {
+    console.error('Error constructing WebSocket URL:', error);
+    // Fallback URL
+    return 'wss://nova-sol.onrender.com/connect';
+  }
+}
 
 export default function Cosmo() {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_WS_URL || 'https://nova-sol.onrender.com';
+  const wsUrl = constructWebSocketURL(backendUrl);
+
   const { connected, connectionState, messages, error, reconnect } = useWebSocket(wsUrl);
   const [searchQuery, setSearchQuery] = useState("")
   const [demoMode, setDemoMode] = useState(false)
