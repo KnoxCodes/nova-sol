@@ -40,7 +40,12 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 
 export default function Cosmo() {
-  const { connected, connectionState, messages, error, reconnect } = useWebSocket(backendUrl)
+  // Converts http/https to ws/wss
+const wsProtocol = backendUrl.startsWith("https") ? "wss" : "ws";
+const wsUrl = `${wsProtocol}://${new URL(backendUrl).host}/connect`;
+
+const { connected, connectionState, messages, error, reconnect } = useWebSocket(wsUrl);
+
   const [searchQuery, setSearchQuery] = useState("")
   const [demoMode, setDemoMode] = useState(false)
   const [displayMessages, setDisplayMessages] = useState<TokenData[]>([])
