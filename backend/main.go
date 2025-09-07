@@ -42,11 +42,17 @@ func startServer() {
 	// Register the WebSocket handler
 	handler.HandleFunc(websocketEndpoint, HandleWebSocket)
 
+	port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+
 	// Create HTTP server configuration
 	server := &http.Server{
-		Addr:    serverPort,
-		Handler: handler,
-	}
+        Addr:    ":" + port,
+        Handler: handler,
+    }
 
 	fmt.Printf("Server starting on port %s\n", serverPort)
 	fmt.Printf("WebSocket endpoint available at %s%s\n", serverPort, websocketEndpoint)

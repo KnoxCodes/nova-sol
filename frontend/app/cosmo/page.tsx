@@ -36,16 +36,13 @@ const demoTokens: TokenData[] = [
     uri: "https://cf-ipfs.com/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco",
   },
 ]
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!;
-
-
-export default function Cosmo() {
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_WS_URL!;
   // Converts http/https to ws/wss
 const wsProtocol = backendUrl.startsWith("https") ? "wss" : "ws";
 const wsUrl = `${wsProtocol}://${new URL(backendUrl).host}/connect`;
 
-const { connected, connectionState, messages, error, reconnect } = useWebSocket(wsUrl);
-
+export default function Cosmo() {
+  const { connected, connectionState, messages, error, reconnect } = useWebSocket(wsUrl);
   const [searchQuery, setSearchQuery] = useState("")
   const [demoMode, setDemoMode] = useState(false)
   const [displayMessages, setDisplayMessages] = useState<TokenData[]>([])
